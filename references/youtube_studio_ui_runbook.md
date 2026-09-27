@@ -1,20 +1,22 @@
 # Simple YouTube Studio Browser Upload Runbook (`youtube_studio_ui_runbook.md`)
 
-This runbook details the exact `chrome-devtools` MCP actions needed to upload a local video file to YouTube Studio (`https://studio.youtube.com`), write a **Title** and **Description**, set Visibility to **Unlisted**, and save it cleanly.
+This runbook details the exact browser actions needed to upload a local video file to YouTube Studio (`https://studio.youtube.com`), write a **Title** and **Description**, set Visibility to **Unlisted**, and save it cleanly using either **Chrome (`chrome-devtools`)** or the **ChatGPT internal browser** as an automatic fallback.
 
 ---
 
-## Step 1: Open YouTube Studio & Start Upload
+## Step 1: Open YouTube Studio & Start Upload (Chrome or ChatGPT Internal Browser)
 
-1. **Navigate to YouTube Studio**:
-   - Call `list_pages` first; if `studio.youtube.com` is already open, select that page (`select_page`), otherwise call `navigate_page` with `url: "https://studio.youtube.com"`.
-   - Call `take_snapshot` to inspect the dashboard.
-   - *If redirected to Google Sign-In*: Ask the user to log in on the open Chrome window and wait for confirmation.
-2. **Open the Upload Dialog**:
+1. **Choose Browser (Automatic Fallback)**:
+   - Try opening or connecting to the Chrome browser via `chrome-devtools` (`list_pages` / `navigate_page`).
+   - **If the agent is unable to open Chrome**: Immediately switch to the **ChatGPT internal browser** (built-in browser tool) and execute all steps below inside the internal browser.
+2. **Navigate to YouTube Studio**:
+   - Open `https://studio.youtube.com` and inspect the dashboard.
+   - *If redirected to Google Sign-In*: Ask the user to log in on the open browser window and wait for confirmation.
+3. **Open the Upload Dialog**:
    - Click the **`"Create"`** button in the top-right header (`button "Create"`), then click **`"Upload videos"`** (`menuitem "Upload videos"`), OR click the **`"Upload videos"`** button directly on the dashboard.
-3. **Upload the Local Video File**:
-   - Call `upload_file` using the `uid` of the **`"Select files"`** button (or file input) and `filePath` set to the absolute path of the local video file.
-   - Wait for the upload modal (`ytcp-uploads-dialog`) to transition to the **Details** view (`take_snapshot`).
+4. **Upload the Local Video File**:
+   - Attach the local video file using the **`"Select files"`** button (or file input) with `filePath` set to the absolute path of the local video file.
+   - Wait for the upload modal (`ytcp-uploads-dialog`) to transition to the **Details** view.
 
 ---
 

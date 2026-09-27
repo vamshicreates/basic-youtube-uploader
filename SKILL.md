@@ -1,17 +1,18 @@
 ---
 name: basic-youtube-uploader
 description: >-
-  Simple, fast, and effective YouTube video uploader via browser automation (chrome-devtools).
-  Trigger this skill whenever the user asks to upload a video from the local folder (`uploads/`
-  or workspace) to their YouTube channel as Unlisted or wants a quick, direct upload. Identifies
-  the local video file, opens YouTube Studio in the browser, uploads the video file directly,
-  writes a clean Title and Description, sets visibility to Unlisted, saves the video, and returns
-  the Unlisted YouTube link.
+  Simple, fast, and effective YouTube video uploader via browser automation (Chrome DevTools or
+  ChatGPT internal browser fallback). Trigger this skill whenever the user asks to upload a video
+  from the local folder (`uploads/` or workspace) to their YouTube channel as Unlisted or wants a
+  quick, direct upload. Identifies the local video file, opens YouTube Studio in Chrome (or the
+  ChatGPT internal browser if Chrome cannot be opened), uploads the video file directly, writes a
+  clean Title and Description, sets visibility to Unlisted, saves the video, and returns the
+  Unlisted YouTube link.
 ---
 
 # Basic YouTube Uploader (`basic-youtube-uploader`)
 
-Upload a local video file directly to the user's YouTube channel as **Unlisted** using browser access (`chrome-devtools`). Execute these **4 simple steps** effectively without unnecessary overhead—do **not** run audio transcription, ffmpeg re-encoding, thumbnail generation, tags, subtitles, end screens, cards, or post-publish comments unless explicitly requested by the user.
+Upload a local video file directly to the user's YouTube channel as **Unlisted** using browser access (`chrome-devtools`, or the **ChatGPT internal browser** if Chrome cannot be opened). Execute these **4 simple steps** effectively without unnecessary overhead—do **not** run audio transcription, ffmpeg re-encoding, thumbnail generation, tags, subtitles, end screens, cards, or post-publish comments unless explicitly requested by the user.
 
 ---
 
@@ -27,13 +28,15 @@ python3 .agents/skills/basic-youtube-uploader/scripts/find_local_video.py
 
 ---
 
-### Step 2: Open YouTube Studio & Upload the Video File Directly (`chrome-devtools`)
-1. Activate the `chrome-devtools` skill and check open browser pages (`list_pages`).
-2. Navigate to `https://studio.youtube.com` (`navigate_page`) and take a snapshot (`take_snapshot`).
-   - *If not signed in*: Ask the user to sign in to their Google/YouTube account in the open Chrome window and wait for confirmation.
+### Step 2: Open YouTube Studio & Upload the Video File Directly (Chrome or ChatGPT Internal Browser Fallback)
+1. **Browser Selection & Fallback**:
+   - First attempt to open or connect to Chrome via `chrome-devtools` (`list_pages` / `navigate_page`).
+   - **Fallback**: If the agent is unable to open or connect to the external Chrome browser (e.g., Chrome is unavailable, locked, or fails to launch), **immediately fall back to the ChatGPT internal browser** (built-in agent browser tool) and perform the exact same YouTube Studio steps there.
+2. Navigate to `https://studio.youtube.com` and inspect the page (`take_snapshot` or browser view).
+   - *If not signed in*: Ask the user to sign in to their Google/YouTube account in the open browser window and wait for confirmation.
 3. Click **`"Create"`** (top-right header button) -> click **`"Upload videos"`** (or click the dashboard `"Upload videos"` button directly).
-4. Call `upload_file` with `filePath` set to the exact local `video_path` on the `"Select files"` button (or `<input type="file">`).
-5. Wait for the **Details** upload dialog (`ytcp-uploads-dialog`) to appear (`take_snapshot`).
+4. Attach/upload the exact local `video_path` using the browser's file upload action on the `"Select files"` button (or `<input type="file">`).
+5. Wait for the **Details** upload dialog (`ytcp-uploads-dialog`) to appear.
 
 ---
 
